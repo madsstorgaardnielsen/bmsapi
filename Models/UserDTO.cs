@@ -69,4 +69,6 @@ public class CreateUserDTO {
 }
 
 public class UpdateUserDTO : CreateUserDTO {
+    [Required]
+    public string Id { get; set; }
 }

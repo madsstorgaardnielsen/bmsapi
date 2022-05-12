@@ -26,8 +26,11 @@ public abstract class GenericRepository<TEntity, TContext> : IGenericRepository<
         return true;
     }
 
-    public async Task SaveAsync(CancellationToken ct) {
-        await _context.SaveChangesAsync(ct);
+    public async Task<bool> SaveAsync(CancellationToken ct) {
+        return await _context.SaveChangesAsync(ct) > 0;
+    }
+
+    public async Task DisposeAsync(CancellationToken ct) {
         await _context.DisposeAsync();
     }
 

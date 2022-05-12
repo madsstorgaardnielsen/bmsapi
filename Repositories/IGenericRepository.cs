@@ -8,5 +8,6 @@ public interface IGenericRepository<T> where T : class, IEntity {
     Task<T> Create(T entity, CancellationToken ct);
     // Task<T> Update(T entity, CancellationToken ct);
     Task<bool> Delete(string id, CancellationToken ct);
-    Task SaveAsync(CancellationToken ct);
+    Task<bool>  SaveAsync(CancellationToken ct);
+    Task DisposeAsync(CancellationToken ct);
 }
