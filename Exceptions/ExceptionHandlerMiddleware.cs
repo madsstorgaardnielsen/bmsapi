@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace BMSAPI.Exceptions;
 
@@ -27,6 +28,13 @@ public class ExceptionHandlerMiddleware {
             };
 
             var result = JsonSerializer.Serialize(new {message = error?.Message});
+            Console.WriteLine("----------------------------------------------------");
+            Console.WriteLine("ExceptionHandlerMiddleware");
+            Console.WriteLine("error message: " + error.Message);
+            Console.WriteLine("response status code: " + response.StatusCode);
+            Console.WriteLine("stack trace: " + error);
+            Console.WriteLine("----------------------------------------------------");
+
             await response.WriteAsync(result);
         }
     }

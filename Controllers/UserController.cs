@@ -2,8 +2,8 @@ using AutoMapper;
 using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;
+using BMSAPI.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BMSAPI.Controllers;
@@ -11,14 +11,34 @@ namespace BMSAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase {
-    private readonly UserRepository _userRepository;
     private readonly ILogger<UserController> _logger;
-    private readonly IMapper _mapper;
+    private readonly UserService _userService;
 
-    public UserController(UserRepository userRepository, ILogger<UserController> logger, IMapper mapper) {
-        _userRepository = userRepository;
+    public UserController(UserService userService,
+        ILogger<UserController> logger) {
         _logger = logger;
-        _mapper = mapper;
+        _userService = userService;
+    }
+
+    [Authorize]
+    [HttpPost(Name = "AddChild")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddChild([FromBody] CreateChildDTO childDTO, CancellationToken ct) {
+        if (!ModelState.IsValid) {
+            _logger.LogError($"Error validating data in {nameof(AddChild)}");
+            return BadRequest(ModelState);
+        }
+
+        var child = await _userService.AddChild(childDTO, ct);
+
+        if (child != null) {
+            return CreatedAtAction(nameof(AddChild), new {id = child.Id}, child);
+        }
+
+
+        return Problem("Error adding child");
     }
 
     [Authorize]
@@ -28,29 +48,15 @@ public class UserController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO userDTO, CancellationToken ct) {
         if (ModelState.IsValid) {
-            var user = await _userRepository.Get(userDTO.Id, ct);
-
-            user.Name = userDTO.Name;
-            user.Lastname = userDTO.Lastname;
-            user.Country = userDTO.Country;
-            user.City = userDTO.City;
-            user.Zip = userDTO.Zip;
-            user.Street = userDTO.Street;
-            user.StreetNumber = userDTO.StreetNumber;
-            user.Email = userDTO.Email;
-            user.Floor = userDTO.Floor;
-
-            var result = await _userRepository.SaveAsync(ct);
-
-            if (result) {
-                var mappedResult = _mapper.Map<UserDTO>(result);
-                return Ok(mappedResult);
-            }
-        }
-        else {
             _logger.LogError($"Error validating data in {nameof(UpdateUser)}");
             return BadRequest(ModelState);
         }
+
+        var result = await _userService.UpdateUser(User.Identity.Name, userDTO, ct);
+        if (result != null) {
+            return Ok(result);
+        }
+
 
         return Problem("Error updating user");
     }

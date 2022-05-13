@@ -1,11 +1,6 @@
-using AutoMapper;
-using BMSAPI.Database.Models;
 using BMSAPI.Models;
-using BMSAPI.Repositories;
 using BMSAPI.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BMSAPI.Controllers;
@@ -13,37 +8,28 @@ namespace BMSAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase {
-    private readonly UserManager<User> _userManager;
     private readonly ILogger<AuthController> _logger;
-    private readonly IMapper _mapper;
-    private readonly IAuthService _authService;
+    private readonly AuthService _authService;
     private readonly JWTService _jwtService;
-    private readonly UserRepository _userRepository;
 
-    public AuthController(UserManager<User> userManager, ILogger<AuthController> logger, IMapper mapper,
-        IAuthService authService, JWTService jwtService, UserRepository userRepository) {
-        _userManager = userManager;
+
+    public AuthController(ILogger<AuthController> logger,
+        AuthService authService, JWTService jwtService) {
         _logger = logger;
-        _mapper = mapper;
         _authService = authService;
         _jwtService = jwtService;
-        _userRepository = userRepository;
     }
 
     [HttpPost]
     [Route("signin")]
     public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO) {
-        _logger.LogInformation("Init login attempt");
-        _logger.LogInformation("Username: " + loginDTO.Username);
-        _logger.LogInformation("------------------");
-
         if (!ModelState.IsValid) {
             return BadRequest(ModelState);
         }
 
-        var validationResult = await _authService.AuthenticateUser(loginDTO);
+        var result = await _authService.AttemptLogin(loginDTO);
 
-        if (validationResult) {
+        if (result) {
             return Accepted(new {Token = await _jwtService.CreateToken(loginDTO.Username)});
         }
 
@@ -54,27 +40,18 @@ public class AuthController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] CreateUserDTO userDto) {
-        _logger.LogInformation($"Init registration attempt: {userDto.Email}");
-
         if (!ModelState.IsValid) {
             return BadRequest(ModelState);
         }
 
-        var user = _mapper.Map<User>(userDto);
-        // user.UserName = userDto.Email.Split("@")[0];
-
-        var result = await _userManager.CreateAsync(user, userDto.Password);
+        var result = await _authService.CreateUser(userDto);
 
         if (result.Succeeded) {
-            var role = new List<string> {"User"};
-            await _userManager.AddToRolesAsync(user, role);
             return Accepted();
         }
 
         foreach (var error in result.Errors) {
             ModelState.AddModelError(error.Code, error.Description);
-            _logger.LogInformation($"Error code: {error.Code}");
-            _logger.LogInformation($"Error description: {error.Description}");
         }
 
         return BadRequest(ModelState);
@@ -91,19 +68,10 @@ public class AuthController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        if (ModelState.IsValid) {
-            var validationResult = await _authService.AuthenticateUser(new LoginDTO
-                {Username = changePasswordDTO.Username, Password = changePasswordDTO.Password});
+        var result = await _authService.UpdateUserPassword(changePasswordDTO, ct);
 
-            if (validationResult) {
-                var user = await _userManager.FindByNameAsync(changePasswordDTO.Username);
-                var result = await _userManager.ChangePasswordAsync(user, changePasswordDTO.Password,
-                    changePasswordDTO.NewPassword);
-                if (result.Succeeded) {
-                    await _userRepository.SaveAsync(ct);
-                    return NoContent();
-                }
-            }
+        if (result.Succeeded) {
+            return NoContent();
         }
 
         return Unauthorized();

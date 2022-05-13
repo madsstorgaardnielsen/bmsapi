@@ -12,7 +12,7 @@ public abstract class GenericRepository<TEntity, TContext> : IGenericRepository<
         _context = context;
     }
 
-    public async Task<TEntity> Create(TEntity entity, CancellationToken ct) {
+    public async Task<TEntity?> Create(TEntity entity, CancellationToken ct) {
         _context.Set<TEntity>().Add(entity);
         await SaveAsync(ct);
         return entity;
@@ -34,12 +34,11 @@ public abstract class GenericRepository<TEntity, TContext> : IGenericRepository<
         await _context.DisposeAsync();
     }
 
-    public async Task<TEntity> Get(string id, CancellationToken ct) {
-        var entity = await _context.Set<TEntity>().SingleOrDefaultAsync(x => x.Id == id, ct);
-        return entity ?? null;
+    public async Task<TEntity?> Get(string id, CancellationToken ct) {
+        return await _context.Set<TEntity>().SingleOrDefaultAsync(x => x.Id == id, ct);
     }
 
-    public async Task<List<TEntity>> GetAll(CancellationToken ct) {
+    public async Task<List<TEntity>?> GetAll(CancellationToken ct) {
         return await _context.Set<TEntity>().AsNoTracking().ToListAsync(ct);
     }
 

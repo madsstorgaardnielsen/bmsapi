@@ -8,4 +8,5 @@ public class Measurement : IEntity{
     public double Length { get; set; }
     public double HeadCircumference { get; set; }
     public Child Child { get; set; }
+    public string ChildId { get; set; }
 }

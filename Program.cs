@@ -12,9 +12,13 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>(options => { options.EnableSensitiveDataLogging(); });
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JWTService>();
+builder.Services.AddScoped<ChildService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ChildRepository>();
+builder.Services.AddScoped<DiaperRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();

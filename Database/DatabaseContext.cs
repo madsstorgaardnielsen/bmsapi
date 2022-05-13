@@ -55,50 +55,77 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.Entity<Sleep>().Property(x => x.Id).ValueGeneratedOnAdd();
 
         //Relationships
-        builder.Entity<Child>().HasMany(x => x.Diapers).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        builder.Entity<Child>().HasMany(x => x.Feedings).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        builder.Entity<Child>().HasMany(x => x.FeedingProfiles).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        builder.Entity<Child>().HasMany(x => x.Measurements).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        builder.Entity<Child>().HasMany(x => x.Notes).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        builder.Entity<Child>().HasMany(x => x.Sleeps).WithOne(x => x.Child).OnDelete(DeleteBehavior.SetNull);
-        
+        builder.Entity<User>()
+            .HasMany(x => x.Children)
+            .WithMany(x => x.Parents);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.Diapers)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.Feedings)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.FeedingProfiles)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.Measurements)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.Notes)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Child>()
+            .HasMany(x => x.Sleeps)
+            .WithOne(x => x.Child)
+            .OnDelete(DeleteBehavior.Cascade);
+
         //Required fields
         builder.Entity<User>().Property(x => x.Name).IsRequired();
         builder.Entity<User>().Property(x => x.Lastname).IsRequired();
         builder.Entity<User>().Property(x => x.UserName).IsRequired();
         builder.Entity<User>().Property(x => x.Email).IsRequired();
-        
+
         builder.Entity<Child>().Property(x => x.Birthdate).IsRequired();
         builder.Entity<Child>().Property(x => x.Name).IsRequired();
 
-        builder.Entity<Diaper>().Property(x=>x.Child).IsRequired();
-        builder.Entity<Diaper>().Property(x=>x.Date).IsRequired();
-        
-        builder.Entity<Feeding>().Property(x=>x.Child).IsRequired();
-        builder.Entity<Feeding>().Property(x=>x.Date).IsRequired();
-        builder.Entity<Feeding>().Property(x=>x.Amount).IsRequired();
-        builder.Entity<Feeding>().Property(x=>x.Breast).IsRequired();
-        
-        builder.Entity<FeedingProfile>().Property(x=>x.Child).IsRequired();
-        builder.Entity<FeedingProfile>().Property(x=>x.Title).IsRequired();
-        builder.Entity<FeedingProfile>().Property(x=>x.TotalAmount).IsRequired();
-        builder.Entity<FeedingProfile>().Property(x=>x.TimesPrDay).IsRequired();
-        
-        builder.Entity<Measurement>().Property(x=>x.Child).IsRequired();
-        builder.Entity<Measurement>().Property(x=>x.Date).IsRequired();
-        builder.Entity<Measurement>().Property(x=>x.Height).IsRequired();
-        builder.Entity<Measurement>().Property(x=>x.Length).IsRequired();
-        builder.Entity<Measurement>().Property(x=>x.Weight).IsRequired();
-        builder.Entity<Measurement>().Property(x=>x.HeadCircumference).IsRequired();
-        
-        builder.Entity<Note>().Property(x=>x.Child).IsRequired();
-        builder.Entity<Note>().Property(x=>x.Date).IsRequired();
-        builder.Entity<Note>().Property(x=>x.Text).IsRequired();
-        
-        builder.Entity<Sleep>().Property(x=>x.Child).IsRequired();
-        builder.Entity<Sleep>().Property(x=>x.Date).IsRequired();
-        builder.Entity<Sleep>().Property(x=>x.From).IsRequired();
-        builder.Entity<Sleep>().Property(x=>x.To).IsRequired();
-        builder.Entity<Sleep>().Property(x=>x.HeadPosition).IsRequired();
+        builder.Entity<Diaper>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<Diaper>().Property(x => x.Date).IsRequired();
+
+        builder.Entity<Feeding>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<Feeding>().Property(x => x.Date).IsRequired();
+        builder.Entity<Feeding>().Property(x => x.Amount).IsRequired();
+        builder.Entity<Feeding>().Property(x => x.Breast).IsRequired();
+
+        builder.Entity<FeedingProfile>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<FeedingProfile>().Property(x => x.Title).IsRequired();
+        builder.Entity<FeedingProfile>().Property(x => x.TotalAmount).IsRequired();
+        builder.Entity<FeedingProfile>().Property(x => x.TimesPrDay).IsRequired();
+
+        builder.Entity<Measurement>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<Measurement>().Property(x => x.Date).IsRequired();
+        builder.Entity<Measurement>().Property(x => x.Height).IsRequired();
+        builder.Entity<Measurement>().Property(x => x.Length).IsRequired();
+        builder.Entity<Measurement>().Property(x => x.Weight).IsRequired();
+        builder.Entity<Measurement>().Property(x => x.HeadCircumference).IsRequired();
+
+        builder.Entity<Note>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<Note>().Property(x => x.Date).IsRequired();
+        builder.Entity<Note>().Property(x => x.Text).IsRequired();
+
+        builder.Entity<Sleep>().Navigation(x => x.Child).IsRequired();
+        builder.Entity<Sleep>().Property(x => x.Date).IsRequired();
+        builder.Entity<Sleep>().Property(x => x.From).IsRequired();
+        builder.Entity<Sleep>().Property(x => x.To).IsRequired();
+        builder.Entity<Sleep>().Property(x => x.HeadPosition).IsRequired();
     }
 }

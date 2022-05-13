@@ -10,4 +10,5 @@ public class Child : IEntity {
     public List<Sleep> Sleeps { get; set; }
     public List<Note> Notes { get; set; }
     public List<FeedingProfile> FeedingProfiles { get; set; }
+    public List<User> Parents { get; set; }
 }

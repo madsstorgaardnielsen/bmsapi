@@ -7,4 +7,5 @@ public class Sleep : IEntity{
     public DateTime To { get; set; }
     public bool HeadPosition { get; set; }
     public Child Child { get; set; }
+    public string ChildId { get; set; }
 }

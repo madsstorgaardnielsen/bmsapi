@@ -6,4 +6,5 @@ public class FeedingProfile : IEntity{
     public double TotalAmount{ get; set; }
     public int TimesPrDay{ get; set; } 
     public Child Child { get; set; }
+    public string ChildId { get; set; }
 }
