@@ -1,6 +1,6 @@
-namespace BMSAPI.Database.Models; 
+namespace BMSAPI.Database.Models;
 
-public class Sleep : IEntity{
+public class Sleep : IEntity {
     public string Id { get; set; }
     public DateTime Date { get; set; }
     public DateTime From { get; set; }

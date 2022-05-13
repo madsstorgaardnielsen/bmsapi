@@ -5,10 +5,9 @@ using BMSAPI.Database.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BMSAPI.Services; 
+namespace BMSAPI.Services;
 
 public class JWTService {
-    
     private readonly IConfiguration _configuration;
     private UserManager<User> _userManager;
 
@@ -16,7 +15,7 @@ public class JWTService {
         _userManager = userManager;
         _configuration = configuration;
     }
-    
+
     public async Task<string> CreateToken(string username) {
         var user = await _userManager.FindByNameAsync(username);
         var signingCredentials = GetSigningCredentials();
@@ -48,9 +47,9 @@ public class JWTService {
     private async Task<List<Claim>> GetClaims(User user) {
         var claims = new List<Claim> {
             new("Id", user.Id),
-            new (ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Name, user.UserName),
-            new (ClaimTypes.Expiration, DateTime.Now.AddDays(14).ToString("MMM ddd dd yyyy HH:mm:ss tt"))
+            new(ClaimTypes.Expiration, DateTime.Now.AddDays(14).ToString("MMM ddd dd yyyy HH:mm:ss tt"))
         };
 
         var roles = await _userManager.GetRolesAsync(user);

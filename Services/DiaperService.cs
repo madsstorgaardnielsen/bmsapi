@@ -1,5 +1,4 @@
 using AutoMapper;
-using BMSAPI.Controllers;
 using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;

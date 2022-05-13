@@ -2,7 +2,7 @@ using AutoMapper;
 using BMSAPI.Database;
 using BMSAPI.Database.Models;
 
-namespace BMSAPI.Repositories; 
+namespace BMSAPI.Repositories;
 
 public class DiaperRepository : GenericRepository<Diaper, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
@@ -12,5 +12,4 @@ public class DiaperRepository : GenericRepository<Diaper, DatabaseContext> {
         _dbContext = context;
         _mapper = mapper;
     }
-    
 }

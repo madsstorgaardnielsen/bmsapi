@@ -30,9 +30,9 @@ public class CreateChildDTO {
 
 public class UpdateChildDTO {
     [Required] [DataType(DataType.Text)] public string Id { get; set; }
-    
+
     public string ParentOneId { get; set; }
-    
+
     public string ParentTwoId { get; set; }
 
     [Required]

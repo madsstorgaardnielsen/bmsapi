@@ -1,6 +1,6 @@
-namespace BMSAPI.Database.Models; 
+namespace BMSAPI.Database.Models;
 
-public class Note : IEntity{
+public class Note : IEntity {
     public string Id { get; set; }
     public DateTime Date { get; set; }
     public string Text { get; set; }

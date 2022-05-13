@@ -1,6 +1,6 @@
-namespace BMSAPI.Database.Models; 
+namespace BMSAPI.Database.Models;
 
-public class Diaper : IEntity{
+public class Diaper : IEntity {
     public string Id { get; set; }
     public DateTime Date { get; set; }
     public bool Wet { get; set; }

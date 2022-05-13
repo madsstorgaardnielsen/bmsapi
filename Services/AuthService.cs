@@ -1,12 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using AutoMapper;
 using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BMSAPI.Services;
 

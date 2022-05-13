@@ -1,4 +1,4 @@
-namespace BMSAPI.Database.Models; 
+namespace BMSAPI.Database.Models;
 
 public class Feeding : IEntity {
     public string Id { get; set; }

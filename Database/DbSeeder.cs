@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BMSAPI.Database; 
+namespace BMSAPI.Database;
 
 public class DbSeeder {
-    
 }
 
 public class SeedRoles : IEntityTypeConfiguration<IdentityRole> {
@@ -54,7 +53,6 @@ public class SeedAdminUser : IEntityTypeConfiguration<User> {
             StreetNumber = "ADMIN",
             Floor = "ADMIN",
             PhoneNumber = "ADMIN",
-            
         };
         admin.PasswordHash = PwGenerator(admin);
         builder.HasData(admin);

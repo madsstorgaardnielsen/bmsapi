@@ -1,7 +1,4 @@
-using AutoMapper;
-using BMSAPI.Database.Models;
 using BMSAPI.Models;
-using BMSAPI.Repositories;
 using BMSAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
