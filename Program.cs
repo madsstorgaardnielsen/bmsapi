@@ -15,6 +15,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => { options.EnableSensit
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<ChildService>();
+builder.Services.AddScoped<DiaperService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ChildRepository>();
