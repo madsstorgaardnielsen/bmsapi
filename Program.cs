@@ -1,5 +1,4 @@
 using AspNetCoreRateLimit;
-using AutoMapper.Internal.Mappers;
 using BMSAPI.ApiConfig;
 using BMSAPI.Database;
 using BMSAPI.Exceptions;
