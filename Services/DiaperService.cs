@@ -33,4 +33,13 @@ public class DiaperService {
 
         return _mapper.Map<DiaperDTO>(diaper);
     }
+
+    public async Task<List<DiaperDTO>> GetAllDiapers(string username, GetAllDiapersDTO diapersDTO, CancellationToken ct) {
+        var diapers = await _diaperRepository.GetAllDiapers(username, diapersDTO, ct);
+        return _mapper.Map<List<DiaperDTO>>(diapers);
+    }
+    
+    public async Task<bool> DeleteDiaper(string diaperId, string username, CancellationToken ct) {
+        return await _diaperRepository.Delete(diaperId, ct);
+    }
 }

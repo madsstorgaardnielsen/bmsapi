@@ -11,4 +11,5 @@ public class Child : IEntity {
     public List<Note> Notes { get; set; }
     public List<FeedingProfile> FeedingProfiles { get; set; }
     public List<User> Parents { get; set; }
+    public byte[] Timestamp { get; set; }
 }

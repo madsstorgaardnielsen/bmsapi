@@ -6,14 +6,14 @@ namespace BMSAPI.Models;
 public class ChildDTO {
     public string Id { get; set; }
     public string Name { get; set; }
-    public DateTime Birthdate { get; set; }
+    public string Birthdate { get; set; }
     public List<UserDTO> Parents { get; set; }
 }
 
 public class SimpleChildDTO {
     public string Id { get; set; }
     public string Name { get; set; }
-    public DateTime Birthdate { get; set; }
+    public string Birthdate { get; set; }
 }
 
 public class CreateChildDTO {
@@ -23,7 +23,7 @@ public class CreateChildDTO {
 
     [Required]
     [DataType(DataType.DateTime)]
-    public DateTime Birthdate { get; set; }
+    public string Birthdate { get; set; }
 
     [Required] [DataType(DataType.Text)] public string Name { get; set; }
 }

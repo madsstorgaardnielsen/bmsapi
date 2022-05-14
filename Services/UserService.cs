@@ -46,10 +46,5 @@ public class UserService {
         return null;
     }
 
-    public async Task<SimpleChildDTO?> AddChild(CreateChildDTO childDTO, CancellationToken ct) {
-        var child = _mapper.Map<Child>(childDTO);
-        var createdChild = await _childRepository.Create(child, ct);
-        var result = await _userRepository.AddParentsToChild(createdChild.Id, childDTO, ct);
-        return _mapper.Map<SimpleChildDTO>(result);
-    }
+    
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;
 
@@ -6,17 +7,22 @@ namespace BMSAPI.Services;
 
 public class ChildService {
     private readonly ChildRepository _childRepository;
-    private readonly DiaperRepository _diaperRepository;
     private readonly ILogger<ChildService> _logger;
     private readonly IMapper _mapper;
 
-    public ChildService(ChildRepository childRepository, DiaperRepository diaperRepository,
+    public ChildService(ChildRepository childRepository,
         ILogger<ChildService> logger,
         IMapper mapper) {
         _childRepository = childRepository;
-        _diaperRepository = diaperRepository;
         _logger = logger;
         _mapper = mapper;
+    }
+    
+    public async Task<SimpleChildDTO?> AddChild(CreateChildDTO childDTO, CancellationToken ct) {
+        var child = _mapper.Map<Child>(childDTO);
+        var createdChild = await _childRepository.Create(child, ct);
+        var result = await _childRepository.AddParentsToChild(createdChild.Id, childDTO, ct);
+        return _mapper.Map<SimpleChildDTO>(result);
     }
 
     public async Task<List<SimpleChildDTO>?> GetAllChildren(string username, CancellationToken ct) {

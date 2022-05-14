@@ -94,38 +94,45 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.Entity<User>().Property(x => x.Lastname).IsRequired();
         builder.Entity<User>().Property(x => x.UserName).IsRequired();
         builder.Entity<User>().Property(x => x.Email).IsRequired();
+        builder.Entity<User>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<Child>().Property(x => x.Birthdate).IsRequired();
         builder.Entity<Child>().Property(x => x.Name).IsRequired();
+        builder.Entity<Child>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<Diaper>().Navigation(x => x.Child).IsRequired();
-        builder.Entity<Diaper>().Property(x => x.Date).IsRequired();
+        builder.Entity<Diaper>().Property(x => x.DateTime).IsRequired();
+        builder.Entity<Diaper>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<Feeding>().Navigation(x => x.Child).IsRequired();
-        builder.Entity<Feeding>().Property(x => x.Date).IsRequired();
+        builder.Entity<Feeding>().Property(x => x.DateTime).IsRequired();
         builder.Entity<Feeding>().Property(x => x.Amount).IsRequired();
         builder.Entity<Feeding>().Property(x => x.Breast).IsRequired();
+        builder.Entity<Feeding>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<FeedingProfile>().Navigation(x => x.Child).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.Title).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.TotalAmount).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.TimesPrDay).IsRequired();
+        builder.Entity<FeedingProfile>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<Measurement>().Navigation(x => x.Child).IsRequired();
         builder.Entity<Measurement>().Property(x => x.Date).IsRequired();
-        builder.Entity<Measurement>().Property(x => x.Height).IsRequired();
         builder.Entity<Measurement>().Property(x => x.Length).IsRequired();
         builder.Entity<Measurement>().Property(x => x.Weight).IsRequired();
         builder.Entity<Measurement>().Property(x => x.HeadCircumference).IsRequired();
-
+        builder.Entity<Measurement>().Property(e => e.Timestamp).IsRowVersion();
+        
         builder.Entity<Note>().Navigation(x => x.Child).IsRequired();
         builder.Entity<Note>().Property(x => x.Date).IsRequired();
         builder.Entity<Note>().Property(x => x.Text).IsRequired();
+        builder.Entity<Note>().Property(e => e.Timestamp).IsRowVersion();
 
         builder.Entity<Sleep>().Navigation(x => x.Child).IsRequired();
-        builder.Entity<Sleep>().Property(x => x.Date).IsRequired();
         builder.Entity<Sleep>().Property(x => x.From).IsRequired();
         builder.Entity<Sleep>().Property(x => x.To).IsRequired();
         builder.Entity<Sleep>().Property(x => x.HeadPosition).IsRequired();
+        builder.Entity<Sleep>().Property(e => e.Timestamp).IsRowVersion();
+        
     }
 }

@@ -7,4 +7,5 @@ public class FeedingProfile : IEntity {
     public int TimesPrDay { get; set; }
     public Child Child { get; set; }
     public string ChildId { get; set; }
+    public byte[] Timestamp { get; set; }
 }
