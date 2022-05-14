@@ -18,12 +18,14 @@ builder.Services.AddScoped<DiaperService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FeedingService>();
 builder.Services.AddScoped<MeasurementService>();
+builder.Services.AddScoped<SleepService>();
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ChildRepository>();
 builder.Services.AddScoped<DiaperRepository>();
 builder.Services.AddScoped<FeedingRepository>();
 builder.Services.AddScoped<MeasurementRepository>();
+builder.Services.AddScoped<SleepRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();

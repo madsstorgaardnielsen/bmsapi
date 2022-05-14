@@ -17,3 +17,9 @@ public class CreateSleepDTO {
     public string ChildId { get; set; }
     public byte[] Timestamp { get; set; }
 }
+
+public class GetAllSleepsDTO {
+    public string ChildId { get; set; }
+    public DateTime? From { get; set; }
+    public DateTime? To { get; set; }
+}
