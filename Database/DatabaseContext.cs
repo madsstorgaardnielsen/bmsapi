@@ -42,8 +42,14 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.ApplyConfiguration(new SeedRoles());
         builder.ApplyConfiguration(new SeedAdminUser());
         builder.ApplyConfiguration(new SeedAdminRole());
+        builder.ApplyConfiguration(new SeedFamilyOneMom());
+        builder.ApplyConfiguration(new SeedFamilyOneDad());
 
         builder.Entity<User>().Ignore(u => u.PhoneNumberConfirmed);
+        builder.Entity<User>().Ignore(u => u.TwoFactorEnabled);
+        builder.Entity<User>().Ignore(u => u.LockoutEnabled);
+        builder.Entity<User>().Ignore(u => u.LockoutEnd);
+        builder.Entity<User>().Ignore(u => u.AccessFailedCount);
 
         //Autogenerate keys
         builder.Entity<Child>().Property(x => x.Id).ValueGeneratedOnAdd();
@@ -58,6 +64,10 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.Entity<User>()
             .HasMany(x => x.Children)
             .WithMany(x => x.Parents);
+        
+        builder.Entity<User>()
+            .HasMany(x => x.FeedingProfiles)
+            .WithOne(x => x.User);
 
         builder.Entity<Child>()
             .HasMany(x => x.Diapers)
@@ -70,9 +80,7 @@ public class DatabaseContext : IdentityDbContext<User> {
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Child>()
-            .HasMany(x => x.FeedingProfiles)
-            .WithOne(x => x.Child)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(x => x.FeedingProfile);
 
         builder.Entity<Child>()
             .HasMany(x => x.Measurements)
@@ -110,7 +118,6 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.Entity<Feeding>().Property(x => x.Breast).IsRequired();
         builder.Entity<Feeding>().Property(e => e.Timestamp).IsRowVersion();
 
-        builder.Entity<FeedingProfile>().Navigation(x => x.Child).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.Title).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.TotalAmount).IsRequired();
         builder.Entity<FeedingProfile>().Property(x => x.TimesPrDay).IsRequired();

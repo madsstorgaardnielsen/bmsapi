@@ -12,5 +12,6 @@ public class User : IdentityUser, IEntity {
     public string StreetNumber { get; set; }
     public string Floor { get; set; }
     public List<Child> Children { get; set; }
+    public List<FeedingProfile> FeedingProfiles { get; set; }
     public byte[] Timestamp { get; set; }
 }

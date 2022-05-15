@@ -13,7 +13,7 @@ public class DiaperDTO {
 }
 
 public class GetAllDiapersDTO {
-    public string ChildId { get; set; }
+    public string? ChildId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
 }

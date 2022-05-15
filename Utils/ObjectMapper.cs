@@ -25,5 +25,9 @@ public class ObjectMapper : Profile {
         
         CreateMap<Measurement, MeasurementDTO>().ReverseMap();
         CreateMap<Measurement, CreateMeasurementDTO>().ReverseMap();
+        
+        CreateMap<FeedingProfile, FeedingProfileDTO>().ReverseMap();
+        CreateMap<FeedingProfile, CreateFeedingProfileDTO>().ReverseMap();
+        CreateMap<FeedingProfile, SimpleFeedingProfileDTO>().ReverseMap();
     }
 }

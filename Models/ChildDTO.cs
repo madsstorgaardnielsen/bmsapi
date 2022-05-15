@@ -41,3 +41,8 @@ public class UpdateChildDTO {
 
     [Required] [DataType(DataType.Text)] public string Name { get; set; }
 }
+
+public class ChildFeedingProfileDTO {
+    public SimpleChildDTO Child { get; set; }
+    public SimpleFeedingProfileDTO FeedingProfile { get; set; }
+}

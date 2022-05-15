@@ -18,7 +18,7 @@ public class CreateFeedingDTO {
 }
 
 public class GetAllFeedingDTO {
-    public string ChildId { get; set; }
+    public string? ChildId { get; set; }
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }
 }

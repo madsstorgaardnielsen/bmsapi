@@ -26,36 +26,51 @@ public class DiaperController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(AddDiaper)}");
             return BadRequest(ModelState);
         }
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
 
-        var result = await _diaperService.AddDiaper(User.Identity.Name, diaperDTO, ct);
+        var result = await _diaperService.AddDiaper(user, diaperDTO, ct);
         if (result != null) {
             return Ok();
         }
 
         return Problem("Error adding diaper");
     }
-    
+
+    //TODO childid i url, from/to i body
     [Authorize]
-    [HttpGet( Name = "GetAllDiapers")]
+    [HttpGet("diapers/{childId}", Name = "GetAllDiapers")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllDiapers([FromBody] GetAllDiapersDTO diapersDTO, CancellationToken ct) {
-        var result = await _diaperService.GetAllDiapers(User.Identity.Name, diapersDTO, ct);
+    public async Task<IActionResult> GetAllDiapers([FromBody] GetAllDiapersDTO diapersDTO, string childId,
+        CancellationToken ct) {
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        diapersDTO.ChildId = childId;
+        var result = await _diaperService.GetAllDiapers(user, diapersDTO, ct);
         if (result.Count > 0 && result != null) {
             return Ok(result);
         }
 
         return NotFound($"No diapers for child with id: {diapersDTO.ChildId} found");
     }
-    
+
     [Authorize]
     [HttpDelete("{diaperId}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteDiaper(string diaperId, CancellationToken ct) {
-        var result = await _diaperService.DeleteDiaper(diaperId, User.Identity.Name, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _diaperService.DeleteDiaper(diaperId, user, ct);
         if (result) {
             return NoContent();
         }

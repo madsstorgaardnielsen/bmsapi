@@ -9,11 +9,9 @@ namespace BMSAPI.Repositories;
 
 public class UserRepository : GenericRepository<User, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public UserRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public UserRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
 
     

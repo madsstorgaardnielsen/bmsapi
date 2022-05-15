@@ -33,6 +33,20 @@ public class SeedAdminRole : IEntityTypeConfiguration<IdentityUserRole<string>> 
         };
 
         builder.HasData(assignRole);
+
+        var assignRole2 = new IdentityUserRole<string> {
+            RoleId = "-2",
+            UserId = "-2"
+        };
+
+        builder.HasData(assignRole2);
+
+        var assignRole3 = new IdentityUserRole<string> {
+            RoleId = "-2",
+            UserId = "-3"
+        };
+
+        builder.HasData(assignRole3);
     }
 }
 
@@ -61,5 +75,61 @@ public class SeedAdminUser : IEntityTypeConfiguration<User> {
     private string PwGenerator(User user) {
         var passHash = new PasswordHasher<User>();
         return passHash.HashPassword(user, "admin");
+    }
+}
+
+public class SeedFamilyOneMom : IEntityTypeConfiguration<User> {
+    public void Configure(EntityTypeBuilder<User> builder) {
+        var mom = new User {
+            Id = "-2",
+            UserName = "momone",
+            NormalizedUserName = "MOMONE",
+            Name = "momone",
+            Lastname = "momone",
+            NormalizedEmail = "MOMONE",
+            Email = "momone",
+            Country = "momone",
+            City = "momone",
+            Zip = "momone",
+            Street = "momone",
+            StreetNumber = "momone",
+            Floor = "momone",
+            PhoneNumber = "momone",
+        };
+        mom.PasswordHash = PwGenerator(mom);
+        builder.HasData(mom);
+    }
+
+    private string PwGenerator(User user) {
+        var passHash = new PasswordHasher<User>();
+        return passHash.HashPassword(user, "momone");
+    }
+}
+
+public class SeedFamilyOneDad : IEntityTypeConfiguration<User> {
+    public void Configure(EntityTypeBuilder<User> builder) {
+        var dad = new User {
+            Id = "-3",
+            UserName = "dadone",
+            NormalizedUserName = "DADONE",
+            Name = "dadone",
+            Lastname = "dadone",
+            NormalizedEmail = "DADONE",
+            Email = "dadone",
+            Country = "dadone",
+            City = "dadone",
+            Zip = "dadone",
+            Street = "dadone",
+            StreetNumber = "dadone",
+            Floor = "dadone",
+            PhoneNumber = "dadone",
+        };
+        dad.PasswordHash = PwGenerator(dad);
+        builder.HasData(dad);
+    }
+
+    private string PwGenerator(User user) {
+        var passHash = new PasswordHasher<User>();
+        return passHash.HashPassword(user, "dadone");
     }
 }

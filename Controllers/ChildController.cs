@@ -44,7 +44,11 @@ public class ChildController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteChild(string childId, CancellationToken ct) {
-        var result = await _childService.DeleteChild(childId, User.Identity.Name, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _childService.DeleteChild(childId, user, ct);
         if (result) {
             return NoContent();
         }
@@ -63,8 +67,12 @@ public class ChildController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(UpdateChild)}");
             return BadRequest(ModelState);
         }
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
 
-        var result = await _childService.UpdateChild(User.Identity.Name, childDTO, ct);
+        var result = await _childService.UpdateChild(user, childDTO, ct);
 
         if (result != null) {
             return Ok(result);
@@ -80,7 +88,11 @@ public class ChildController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(string childId, CancellationToken ct) {
-        var result = await _childService.GetChild(User.Identity.Name, childId, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _childService.GetChild(user, childId, ct);
         if (result != null) {
             return Ok(result);
         }
@@ -89,12 +101,16 @@ public class ChildController : ControllerBase {
     }
 
     [Authorize]
-    [HttpGet(Name = "GetAll")]
+    [HttpGet("children",Name = "GetAll")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll(CancellationToken ct) {
-        var result = await _childService.GetAllChildren(User.Identity.Name, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _childService.GetAllChildren(user, ct);
         if (result.Count > 0 && result != null) {
             return Ok(result);
         }

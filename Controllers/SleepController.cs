@@ -28,8 +28,12 @@ public class SleepController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(AddSleep)}");
             return BadRequest(ModelState);
         }
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
 
-        var result = await _sleepService.AddSleep(User.Identity.Name, sleepDTO, ct);
+        var result = await _sleepService.AddSleep(user, sleepDTO, ct);
         if (result != null) {
             return Ok();
         }
@@ -43,7 +47,11 @@ public class SleepController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteSleep(string sleepId, CancellationToken ct) {
-        var result = await _sleepService.DeleteSleep(sleepId, User.Identity.Name, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _sleepService.DeleteSleep(sleepId, user, ct);
         if (result) {
             return NoContent();
         }
@@ -53,12 +61,16 @@ public class SleepController : ControllerBase {
     }
 
     [Authorize]
-    [HttpGet(Name = "GetAllFeedings")]
+    [HttpGet("sleeps",Name = "GetAllSleeps")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllSleeps([FromBody] GetAllSleepsDTO sleepDTO, CancellationToken ct) {
-        var result = await _sleepService.GetAllSleeps(User.Identity.Name, sleepDTO, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _sleepService.GetAllSleeps(user, sleepDTO, ct);
         if (result.Count > 0 && result != null) {
             return Ok(result);
         }

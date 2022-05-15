@@ -8,11 +8,9 @@ namespace BMSAPI.Repositories;
 
 public class MeasurementRepository : GenericRepository<Measurement, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public MeasurementRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public MeasurementRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
 
     public async Task<List<Measurement>> GetAllMeasurementsByUsername(string username, string childId,

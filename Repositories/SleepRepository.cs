@@ -9,11 +9,9 @@ namespace BMSAPI.Repositories;
 
 public class SleepRepository  : GenericRepository<Sleep, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public SleepRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public SleepRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
     
     public async Task<List<Feeding>>

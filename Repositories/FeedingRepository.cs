@@ -10,21 +10,60 @@ namespace BMSAPI.Repositories;
 
 public class FeedingRepository : GenericRepository<Feeding, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public FeedingRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public FeedingRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
 
-    public async Task<List<Feeding>>
-        GetAllFeedings(string username, GetAllFeedingDTO feedingDTO, CancellationToken ct) {
-        var user = await
+    private async Task<User?> GetUser(string username, CancellationToken ct) {
+        return await
             _dbContext
                 .Users
                 .Where(x => x.UserName == username)
                 .Include(x => x.Children)
                 .SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<bool> DeleteFeedingProfile(string username,
+        string profileId, CancellationToken ct) {
+        var user = await GetUser(username, ct);
+        var profile = await _dbContext.FeedingProfiles.Where(x => x.User == user && x.Id == profileId)
+            .SingleOrDefaultAsync(ct);
+        if (profile != null) {
+            _dbContext.FeedingProfiles.Remove(profile);
+            return true;
+        }
+
+        return false;
+    }
+
+    public async Task<FeedingProfile?> GetFeedingProfile(string username,
+        string profileId, CancellationToken ct) {
+        var user = await GetUser(username, ct);
+        return await _dbContext.FeedingProfiles.Where(x => x.User == user && x.Id == profileId).AsNoTracking()
+            .SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<FeedingProfile> CreateFeedingProfile(string username,
+        FeedingProfile createFeedingProfile, CancellationToken ct) {
+        var user = await GetUser(username, ct);
+        createFeedingProfile.User = user;
+        _dbContext.FeedingProfiles.Add(createFeedingProfile);
+        return createFeedingProfile;
+    }
+
+    public async Task<List<FeedingProfile>>
+        GetAllFeedingProfiles(string username, CancellationToken ct) {
+        var user = await GetUser(username, ct);
+
+        var feedingProfiles = await _dbContext.FeedingProfiles.Where(x => x.User == user).ToListAsync(ct);
+
+        return feedingProfiles.OrderBy(x => x.Title).ToList();
+    }
+
+    public async Task<List<Feeding>>
+        GetAllFeedings(string username, GetAllFeedingDTO feedingDTO, CancellationToken ct) {
+        var user = await GetUser(username, ct);
 
         var feedings = await
             _dbContext

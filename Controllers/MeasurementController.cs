@@ -28,8 +28,12 @@ public class MeasurementController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(AddMeasurement)}");
             return BadRequest(ModelState);
         }
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
 
-        var result = await _measurementService.AddMeasurement(User.Identity.Name, measurementDTO, ct);
+        var result = await _measurementService.AddMeasurement(user, measurementDTO, ct);
         if (result != null) {
             return Ok();
         }
@@ -43,7 +47,11 @@ public class MeasurementController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteMeasurement(string measurementId, CancellationToken ct) {
-        var result = await _measurementService.DeleteMeasurement(measurementId, User.Identity.Name, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _measurementService.DeleteMeasurement(measurementId, user, ct);
         if (result) {
             return NoContent();
         }
@@ -53,12 +61,16 @@ public class MeasurementController : ControllerBase {
     }
     
     [Authorize]
-    [HttpGet("{childId}", Name = "GetAllMeasurements")]
+    [HttpGet("measurements/{childId}", Name = "GetAllMeasurements")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllMeasurements(string childId, CancellationToken ct) {
-        var result = await _measurementService.GetAllMeasurements(User.Identity.Name, childId, ct);
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+        var result = await _measurementService.GetAllMeasurements(user, childId, ct);
         if (result.Count > 0 && result != null) {
             return Ok(result);
         }

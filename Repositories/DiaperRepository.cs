@@ -8,11 +8,9 @@ namespace BMSAPI.Repositories;
 
 public class DiaperRepository : GenericRepository<Diaper, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public DiaperRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public DiaperRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
 
     public async Task<List<Diaper>> GetAllDiapers(string username, GetAllDiapersDTO diapersDTO, CancellationToken ct) {

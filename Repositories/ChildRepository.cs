@@ -9,14 +9,12 @@ namespace BMSAPI.Repositories;
 
 public class ChildRepository : GenericRepository<Child, DatabaseContext> {
     private readonly DatabaseContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public ChildRepository(DatabaseContext context, IMapper mapper) : base(context) {
+    public ChildRepository(DatabaseContext context) : base(context) {
         _dbContext = context;
-        _mapper = mapper;
     }
     
-    public async Task<ChildDTO?> AddParentsToChild(string childId, CreateChildDTO childDTO, CancellationToken ct) {
+    public async Task<Child?> AddParentsToChild(string childId, CreateChildDTO childDTO, CancellationToken ct) {
         var child = await _dbContext.Children.Include(x => x.Parents).SingleOrDefaultAsync(x => x.Id == childId, ct);
 
         var parent1 = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == childDTO.ParentOneId, ct);
@@ -35,8 +33,7 @@ public class ChildRepository : GenericRepository<Child, DatabaseContext> {
         var success = await _dbContext.SaveChangesAsync(ct) > 0;
 
         if (success) {
-            var result = _mapper.Map<ChildDTO>(child);
-            return result;
+            return child;
         }
 
         return null;
