@@ -19,6 +19,53 @@ public class FeedingService {
         _childRepository = childRepository;
     }
 
+    public async Task<AverageIntakeDTO> GetAverageIntake(string username, GetAllFeedingDTO feedingDTO,
+        CancellationToken ct) {
+        var feedings = await _feedingRepository.GetAllFeedings(username, feedingDTO, ct);
+        var count = feedings.Count;
+        double sum = 0;
+        var left = 0;
+        var right = 0;
+
+
+        foreach (var feeding in feedings) {
+            sum += feeding.Amount;
+            if (feeding.Breast) {
+                right++;
+            }
+            else {
+                left++;
+            }
+        }
+
+        var dailyAverage = sum / count;
+
+        return new AverageIntakeDTO {
+            DailyAverageIntake = dailyAverage, TotalIntakeInPeriod = sum, AmountTimesRightBreast = right,
+            AmountTimesLeftBreast = left, FromDate = feedingDTO.From, ToDate = feedingDTO.To
+        };
+    }
+
+    public async Task<DailyIntakeStatusDTO> GetDailyStatus(string username, string childId,
+        CancellationToken ct) {
+        var feedings = await _feedingRepository.GetAllFeedings(username,
+            new GetAllFeedingDTO {From = DateTime.Now.Date, To = DateTime.Now.Date, ChildId = childId}, ct);
+
+        var child = await _childRepository.GetByChildId(username, childId,ct);
+
+        var currentAmount = 0.0;
+        var neededAmount = child.FeedingProfile.TotalAmount;
+        foreach (var feeding in feedings) {
+            currentAmount += feeding.Amount;
+        }
+        
+        return new DailyIntakeStatusDTO {
+            CurrentAmount = currentAmount,
+            NeededAmount = neededAmount,
+            Difference = neededAmount - currentAmount
+        };
+    }
+
     public async Task<bool> DeleteFeedingProfile(string profileId, string username, CancellationToken ct) {
         await _feedingRepository.DeleteFeedingProfile(username, profileId, ct);
         return await _feedingRepository.SaveAsync(ct);

@@ -54,7 +54,7 @@ public class ChildRepository : GenericRepository<Child, DatabaseContext> {
             .SingleOrDefaultAsync(ct);
 
         var child = await _dbContext.Children.Where(x => x.Parents.Contains(user) && x.Id == childId)
-            .Include(x => x.Parents).SingleOrDefaultAsync(ct);
+            .Include(x => x.Parents).Include(x=>x.FeedingProfile).SingleOrDefaultAsync(ct);
 
         return child;
     }

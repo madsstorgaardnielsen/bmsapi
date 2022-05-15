@@ -23,6 +23,7 @@ public class FeedingRepository : GenericRepository<Feeding, DatabaseContext> {
                 .Include(x => x.Children)
                 .SingleOrDefaultAsync(ct);
     }
+    
 
     public async Task<bool> DeleteFeedingProfile(string username,
         string profileId, CancellationToken ct) {
