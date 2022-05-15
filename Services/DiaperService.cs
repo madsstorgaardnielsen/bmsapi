@@ -43,6 +43,9 @@ public class DiaperService {
                 diaper.Child = child;
                 await _diaperRepository.SaveAsync(ct);
             }
+            else {
+                return null;
+            }
         }
 
         return _mapper.Map<DiaperDTO>(diaper);
