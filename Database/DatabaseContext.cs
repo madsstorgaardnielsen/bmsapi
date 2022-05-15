@@ -93,9 +93,7 @@ public class DatabaseContext : IdentityDbContext<User> {
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Child>()
-            .HasMany(x => x.Sleeps)
-            .WithOne(x => x.Child)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(x => x.Sleeps);
 
         //Required fields
         builder.Entity<User>().Property(x => x.Name).IsRequired();
@@ -135,7 +133,6 @@ public class DatabaseContext : IdentityDbContext<User> {
         builder.Entity<Note>().Property(x => x.Text).IsRequired();
         builder.Entity<Note>().Property(e => e.Timestamp).IsRowVersion();
 
-        builder.Entity<Sleep>().Navigation(x => x.Child).IsRequired();
         builder.Entity<Sleep>().Property(x => x.From).IsRequired();
         builder.Entity<Sleep>().Property(x => x.To).IsRequired();
         builder.Entity<Sleep>().Property(x => x.HeadPosition).IsRequired();

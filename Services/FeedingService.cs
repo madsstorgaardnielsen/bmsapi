@@ -19,6 +19,24 @@ public class FeedingService {
         _childRepository = childRepository;
     }
 
+    public async Task<FeedingDTO?> UpdateFeeding(string username, UpdateFeedingDTO updateFeedingDTO,
+        CancellationToken ct) {
+        var feeding = await _feedingRepository.GetFeeding(username, updateFeedingDTO.Id, ct);
+        var child = await _childRepository.GetByChildId(username, updateFeedingDTO.ChildId, ct);
+        if (feeding == null || child == null) {
+            return null;
+        }
+
+        feeding.Amount = updateFeedingDTO.Amount;
+        feeding.Breast = updateFeedingDTO.Breast;
+        feeding.DateTime = updateFeedingDTO.DateTime;
+        feeding.Child = child;
+        feeding.ChildId = child.Id;
+
+        await _childRepository.SaveAsync(ct);
+        return _mapper.Map<FeedingDTO>(feeding);
+    }
+
     public async Task<AverageIntakeDTO> GetAverageIntake(string username, GetAllFeedingDTO feedingDTO,
         CancellationToken ct) {
         var feedings = await _feedingRepository.GetAllFeedings(username, feedingDTO, ct);
@@ -49,16 +67,17 @@ public class FeedingService {
     public async Task<DailyIntakeStatusDTO> GetDailyStatus(string username, string childId,
         CancellationToken ct) {
         var feedings = await _feedingRepository.GetAllFeedings(username,
-            new GetAllFeedingDTO {From = DateTime.Now.Date, To = DateTime.Now.Date, ChildId = childId}, ct);
+            new GetAllFeedingDTO
+                {From = DateTime.Now.Date, To = DateTime.Now.Date.AddHours(23).AddMinutes(55), ChildId = childId}, ct);
 
-        var child = await _childRepository.GetByChildId(username, childId,ct);
+        var child = await _childRepository.GetByChildId(username, childId, ct);
 
         var currentAmount = 0.0;
         var neededAmount = child.FeedingProfile.TotalAmount;
         foreach (var feeding in feedings) {
             currentAmount += feeding.Amount;
         }
-        
+
         return new DailyIntakeStatusDTO {
             CurrentAmount = currentAmount,
             NeededAmount = neededAmount,

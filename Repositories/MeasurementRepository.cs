@@ -1,5 +1,3 @@
-using System.Linq;
-using AutoMapper;
 using BMSAPI.Database;
 using BMSAPI.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,17 +16,15 @@ public class MeasurementRepository : GenericRepository<Measurement, DatabaseCont
         var user = await
             _dbContext
                 .Users
-                .Include(x => x.Children)
                 .Where(x => x.UserName == username)
+                .Include(x => x.Children)
+                .ThenInclude(x =>
+                    x.Measurements
+                        .Where(y => y.ChildId == childId))
                 .SingleOrDefaultAsync(ct);
-        
-        var measurements = await
-            _dbContext
-                .Measurements
-                .Include(x => x.Child.Parents)
-                .Where(x => x.ChildId == childId)
-                .Where(x => x.Child.Parents.Contains(user)).ToListAsync(ct);
 
-        return measurements.OrderBy(x => x.Date).ToList();
+        var measurements = user?.Children.SingleOrDefault(x => x.Id == childId)?.Measurements.ToList();
+
+        return measurements == null ? new List<Measurement>() : measurements.OrderBy(x => x.Date).ToList();
     }
 }

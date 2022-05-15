@@ -3,7 +3,8 @@ using BMSAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BMSAPI.Controllers; 
+namespace BMSAPI.Controllers;
+
 [Route("api/Feeding")]
 [ApiController]
 public class FeedingProfileController : ControllerBase {
@@ -14,7 +15,7 @@ public class FeedingProfileController : ControllerBase {
         _feedingService = feedingService;
         _logger = logger;
     }
-    
+
     [Authorize]
     [HttpDelete("profile/{profileId}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,7 +35,7 @@ public class FeedingProfileController : ControllerBase {
         _logger.LogInformation($"Error deleting feeding profile with id: {profileId}");
         return BadRequest();
     }
-    
+
     [Authorize]
     [HttpGet("profiles", Name = "GetAllFeedingProfiles")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -107,5 +108,4 @@ public class FeedingProfileController : ControllerBase {
 
         return Problem("Error adding feeding profile");
     }
-    
 }

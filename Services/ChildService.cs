@@ -17,7 +17,7 @@ public class ChildService {
         _logger = logger;
         _mapper = mapper;
     }
-    
+
     public async Task<SimpleChildDTO?> AddChild(CreateChildDTO childDTO, CancellationToken ct) {
         var child = _mapper.Map<Child>(childDTO);
         var createdChild = await _childRepository.Create(child, ct);
@@ -25,7 +25,7 @@ public class ChildService {
         return _mapper.Map<SimpleChildDTO>(result);
     }
 
-    public async Task<List<SimpleChildDTO>?> GetAllChildren(string username, CancellationToken ct) {
+    public async Task<List<SimpleChildDTO>> GetAllChildren(string username, CancellationToken ct) {
         var children = await _childRepository.GetAllByUsername(username, ct);
         return _mapper.Map<List<SimpleChildDTO>>(children).OrderBy(x => x.Birthdate).ToList();
     }

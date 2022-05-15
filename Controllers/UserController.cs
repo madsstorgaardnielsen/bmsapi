@@ -16,9 +16,7 @@ public class UserController : ControllerBase {
         _logger = logger;
         _userService = userService;
     }
-
     
-
     [Authorize]
     [HttpPut(Name = "UpdateUser")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,7 +32,6 @@ public class UserController : ControllerBase {
         if (result != null) {
             return Ok(result);
         }
-
 
         return Problem("Error updating user");
     }

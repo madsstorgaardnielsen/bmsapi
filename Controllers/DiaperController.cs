@@ -17,6 +17,32 @@ public class DiaperController : ControllerBase {
     }
 
     [Authorize]
+    [HttpPut(Name = "UpdateDiaper")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateDiaper([FromBody] UpdateDiaperDTO updateDiaperDTO, CancellationToken ct) {
+        if (!ModelState.IsValid) {
+            _logger.LogError($"Error validating data in {nameof(UpdateDiaper)}");
+            return BadRequest(ModelState);
+        }
+
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        var result = await _diaperService.UpdateDiaper(user, updateDiaperDTO, ct);
+
+        if (result != null) {
+            return Ok(result);
+        }
+
+        _logger.LogInformation($"Error updating diaper with id: {updateDiaperDTO.Id}");
+        return Problem("Error updating diaper");
+    }
+
+    [Authorize]
     [HttpPost(Name = "AddDiaper")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -26,6 +52,7 @@ public class DiaperController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(AddDiaper)}");
             return BadRequest(ModelState);
         }
+
         var user = User.Identity!.Name;
         if (user == null) {
             return Unauthorized();
@@ -33,13 +60,13 @@ public class DiaperController : ControllerBase {
 
         var result = await _diaperService.AddDiaper(user, diaperDTO, ct);
         if (result != null) {
-            return Ok();
+            return Ok(result);
         }
 
+        _logger.LogInformation($"Error adding diaper");
         return Problem("Error adding diaper");
     }
 
-    //TODO childid i url, from/to i body
     [Authorize]
     [HttpGet("diapers/{childId}", Name = "GetAllDiapers")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,9 +78,10 @@ public class DiaperController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         diapersDTO.ChildId = childId;
         var result = await _diaperService.GetAllDiapers(user, diapersDTO, ct);
-        if (result.Count > 0 && result != null) {
+        if (result.Count > 0) {
             return Ok(result);
         }
 
@@ -70,6 +98,7 @@ public class DiaperController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         var result = await _diaperService.DeleteDiaper(diaperId, user, ct);
         if (result) {
             return NoContent();

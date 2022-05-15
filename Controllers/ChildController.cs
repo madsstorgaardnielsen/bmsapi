@@ -16,13 +16,18 @@ public class ChildController : ControllerBase {
         _childService = childService;
         _logger = logger;
     }
-    
+
     [Authorize]
     [HttpPost(Name = "AddChild")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddChild([FromBody] CreateChildDTO childDTO, CancellationToken ct) {
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+
         if (!ModelState.IsValid) {
             _logger.LogError($"Error validating data in {nameof(AddChild)}");
             return BadRequest(ModelState);
@@ -34,7 +39,7 @@ public class ChildController : ControllerBase {
             return CreatedAtAction(nameof(AddChild), new {id = child.Id}, child);
         }
 
-
+        _logger.LogInformation($"Error adding child");
         return Problem("Error adding child");
     }
 
@@ -48,13 +53,14 @@ public class ChildController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         var result = await _childService.DeleteChild(childId, user, ct);
         if (result) {
             return NoContent();
         }
 
         _logger.LogInformation($"Error deleting child with id: {childId}");
-        return BadRequest();
+        return BadRequest("Error deleting child");
     }
 
     [Authorize]
@@ -63,13 +69,14 @@ public class ChildController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateChild([FromBody] UpdateChildDTO childDTO, CancellationToken ct) {
-        if (!ModelState.IsValid) {
-            _logger.LogError($"Error validating data in {nameof(UpdateChild)}");
-            return BadRequest(ModelState);
-        }
         var user = User.Identity!.Name;
         if (user == null) {
             return Unauthorized();
+        }
+
+        if (!ModelState.IsValid) {
+            _logger.LogError($"Error validating data in {nameof(UpdateChild)}");
+            return BadRequest(ModelState);
         }
 
         var result = await _childService.UpdateChild(user, childDTO, ct);
@@ -78,7 +85,7 @@ public class ChildController : ControllerBase {
             return Ok(result);
         }
 
-
+        _logger.LogInformation($"Error deleting child with id: {childDTO.Id}");
         return Problem("Error updating child");
     }
 
@@ -92,6 +99,7 @@ public class ChildController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         var result = await _childService.GetChild(user, childId, ct);
         if (result != null) {
             return Ok(result);
@@ -101,7 +109,7 @@ public class ChildController : ControllerBase {
     }
 
     [Authorize]
-    [HttpGet("children",Name = "GetAll")]
+    [HttpGet("children", Name = "GetAll")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -110,8 +118,9 @@ public class ChildController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         var result = await _childService.GetAllChildren(user, ct);
-        if (result.Count > 0 && result != null) {
+        if (result.Count > 0) {
             return Ok(result);
         }
 

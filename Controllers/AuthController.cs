@@ -8,14 +8,11 @@ namespace BMSAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase {
-    private readonly ILogger<AuthController> _logger;
     private readonly AuthService _authService;
     private readonly JWTService _jwtService;
 
 
-    public AuthController(ILogger<AuthController> logger,
-        AuthService authService, JWTService jwtService) {
-        _logger = logger;
+    public AuthController(AuthService authService, JWTService jwtService) {
         _authService = authService;
         _jwtService = jwtService;
     }

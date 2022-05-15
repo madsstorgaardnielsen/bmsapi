@@ -3,7 +3,7 @@ using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;
 
-namespace BMSAPI.Services; 
+namespace BMSAPI.Services;
 
 public class MeasurementService {
     private readonly MeasurementRepository _measurementRepository;
@@ -19,8 +19,9 @@ public class MeasurementService {
         _logger = logger;
         _mapper = mapper;
     }
-    
-    public async Task<MeasurementDTO?> AddMeasurement(string username, CreateMeasurementDTO measurementDTO, CancellationToken ct) {
+
+    public async Task<MeasurementDTO?> AddMeasurement(string username, CreateMeasurementDTO measurementDTO,
+        CancellationToken ct) {
         var mappedMeasurement = _mapper.Map<Measurement>(measurementDTO);
         var measurement = await _measurementRepository.Create(mappedMeasurement, ct);
 
@@ -36,10 +37,10 @@ public class MeasurementService {
     }
 
     public async Task<List<MeasurementDTO>> GetAllMeasurements(string username, string childId, CancellationToken ct) {
-        var diapers = await _measurementRepository.GetAllMeasurementsByUsername(username,childId, ct);
+        var diapers = await _measurementRepository.GetAllMeasurementsByUsername(username, childId, ct);
         return _mapper.Map<List<MeasurementDTO>>(diapers);
     }
-    
+
     public async Task<bool> DeleteMeasurement(string feedingId, string username, CancellationToken ct) {
         return await _measurementRepository.Delete(feedingId, ct);
     }

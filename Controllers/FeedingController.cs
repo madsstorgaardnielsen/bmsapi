@@ -16,9 +16,32 @@ public class FeedingController : ControllerBase {
         _logger = logger;
     }
 
-    //get average daily intake for period
-    //get how much food is needed according to feeding profile
-    //calculate difference between total amount from feeding profile and sum of each feeding amount from date
+    [Authorize]
+    [HttpPut(Name = "UpdateFeeding")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateFeeding([FromBody] UpdateFeedingDTO updateFeedingDTO, CancellationToken ct) {
+        if (!ModelState.IsValid) {
+            _logger.LogError($"Error validating data in {nameof(UpdateFeeding)}");
+            return BadRequest(ModelState);
+        }
+
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        var result = await _feedingService.UpdateFeeding(user, updateFeedingDTO, ct);
+
+        if (result != null) {
+            return Ok(result);
+        }
+
+
+        return Problem("Error updating feeding");
+    }
+
     [Authorize]
     [HttpGet("average", Name = "GetAverageIntake")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -41,11 +64,11 @@ public class FeedingController : ControllerBase {
     }
 
     [Authorize]
-    [HttpGet("status/{childId}", Name = "GetDailyStatus")]
+    [HttpGet("status/{childId}", Name = "GetDailyFeedingStatus")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetDailyStatus(string childId,
+    public async Task<IActionResult> GetDailyFeedingStatus(string childId,
         CancellationToken ct) {
         var user = User.Identity!.Name;
         if (user == null) {
@@ -79,7 +102,7 @@ public class FeedingController : ControllerBase {
 
         var result = await _feedingService.AddFeeding(user, feedingDTO, ct);
         if (result != null) {
-            return Ok();
+            return Ok(result);
         }
 
         return Problem("Error adding feeding");

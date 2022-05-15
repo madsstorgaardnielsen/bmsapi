@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BMSAPI.Controllers;
 
-
-
 [Route("api/[controller]")]
 [ApiController]
 public class SleepController : ControllerBase {
@@ -19,6 +17,48 @@ public class SleepController : ControllerBase {
     }
 
     [Authorize]
+    [HttpGet("average", Name = "GetDailyAverageTimeSlept")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetDailyAverageTimeSlept([FromBody] GetAllSleepsDTO sleepsDTO,
+        CancellationToken ct) {
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        var result = await _sleepService.GetDailyAverageTimeSlept(user, sleepsDTO, ct);
+        if (result != null) {
+            return Ok(result);
+        }
+
+        return NotFound(
+            $"No sleeps for child with id: {sleepsDTO.ChildId} found in the period: {sleepsDTO.From} to {sleepsDTO.To}");
+    }
+
+    [Authorize]
+    [HttpGet("status/{childId}", Name = "GetDailySleepStatus")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetDailySleepStatus(string childId,
+        CancellationToken ct) {
+        var user = User.Identity!.Name;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        var result = await _sleepService.GetDailyStatus(user, childId, ct);
+        if (result != null) {
+            return Ok(result);
+        }
+
+        return NotFound(
+            $"No sleeps for child with id: {childId} found");
+    }
+
+    [Authorize]
     [HttpPost(Name = "AddSleep")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -28,6 +68,7 @@ public class SleepController : ControllerBase {
             _logger.LogError($"Error validating data in {nameof(AddSleep)}");
             return BadRequest(ModelState);
         }
+
         var user = User.Identity!.Name;
         if (user == null) {
             return Unauthorized();
@@ -51,6 +92,7 @@ public class SleepController : ControllerBase {
         if (user == null) {
             return Unauthorized();
         }
+
         var result = await _sleepService.DeleteSleep(sleepId, user, ct);
         if (result) {
             return NoContent();
@@ -61,15 +103,18 @@ public class SleepController : ControllerBase {
     }
 
     [Authorize]
-    [HttpGet("sleeps",Name = "GetAllSleeps")]
+    [HttpGet("sleeps/{childId}", Name = "GetAllSleeps")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAllSleeps([FromBody] GetAllSleepsDTO sleepDTO, CancellationToken ct) {
+    public async Task<IActionResult> GetAllSleeps([FromBody] GetAllSleepsDTO sleepDTO, string childId,
+        CancellationToken ct) {
         var user = User.Identity!.Name;
         if (user == null) {
             return Unauthorized();
         }
+
+        sleepDTO.ChildId = childId;
         var result = await _sleepService.GetAllSleeps(user, sleepDTO, ct);
         if (result.Count > 0 && result != null) {
             return Ok(result);
@@ -78,8 +123,3 @@ public class SleepController : ControllerBase {
         return NotFound($"No feedings for child with id: {sleepDTO.ChildId} found");
     }
 }
-
-
-
-
-//get daily average over period

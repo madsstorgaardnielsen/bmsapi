@@ -28,14 +28,15 @@ public class ExceptionHandlerMiddleware {
             };
 
             var result = JsonSerializer.Serialize(new {message = error?.Message});
-            Console.WriteLine("----------------------------------------------------");
-            Console.WriteLine("ExceptionHandlerMiddleware");
-            Console.WriteLine("error message: " + error.Message);
-            Console.WriteLine("response status code: " + response.StatusCode);
-            Console.WriteLine("stack trace: " + error);
-            Console.WriteLine("----------------------------------------------------");
+            // Console.WriteLine("----------------------------------------------------");
+            // Console.WriteLine("ExceptionHandlerMiddleware");
+            // Console.WriteLine("error message: " + error.Message);
+            // Console.WriteLine("response status code: " + response.StatusCode);
+            // Console.WriteLine("stack trace: " + error);
+            // Console.WriteLine("----------------------------------------------------");
 
-            await response.WriteAsync(result);
+            // await response.WriteAsync(result);
+            await response.WriteAsync("Internal server error");
         }
     }
 }

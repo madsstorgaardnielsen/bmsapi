@@ -1,5 +1,4 @@
 using AutoMapper;
-using BMSAPI.Database.Models;
 using BMSAPI.Models;
 using BMSAPI.Repositories;
 
@@ -45,6 +44,4 @@ public class UserService {
 
         return null;
     }
-
-    
 }

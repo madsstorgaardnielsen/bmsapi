@@ -9,14 +9,12 @@ namespace BMSAPI.Services;
 public class AuthService {
     private readonly UserManager<User> _userManager;
     private readonly UserRepository _userRepository;
-    private readonly IConfiguration _configuration;
     private User? _user;
     private readonly IMapper _mapper;
 
-    public AuthService(UserManager<User> userManager, IConfiguration configuration, IMapper mapper,
+    public AuthService(UserManager<User> userManager, IMapper mapper,
         UserRepository userRepository) {
         _userManager = userManager;
-        _configuration = configuration;
         _mapper = mapper;
         _userRepository = userRepository;
     }
